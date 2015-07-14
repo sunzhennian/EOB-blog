@@ -1,0 +1,60 @@
+#+Title:Introduction to OFDM – orthogonal Frequency division multiplexing – part 4 – Cyclic Prefix
+#+DATE: 2014-02-14-05
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS: ofdm
+Consider a non-ideal channel h(t)≠δ(t), that causes delay dispersion. Delay dispersion manifests itself as Inter Symbol Interference (ISI)on each subcarrier channel due to pulse overlapping. It will also cause ICC (Inter Carrier Interference ) due to the non-orthogonality of the received signal. Adding cyclic prefix to each OFDM symbol mitigates the problems of ISI and ICC by removing them altogether.
+
+Lets say, without cyclic prefix we transmit the following N values (N=Nfft=length of FFT/IFFT) for a single OFDM symbol.
+
+$X_0,X_1,X_2,...,X_{N-1}$
+
+Lets consider a cyclic prefix of length Ncp, ( where Ncp<N ), is formed by copying the last Ncp values from the above vector of X and adding those Ncp values to the front part of the same X vector.With a cyclic prefix length Ncp, ( where Ncp<N ), the following values constitute a single OFDM symbol :
+[[../../images/Cyclic_prefix_OFDM_symbol.jpg]]
+If T is the duration of the an OFDM symbol in secs, due to the addition of cyclic prefix of length Ncp, the total duration of an OFDM symbol becomes T+Tcp, where Tcp=Ncp*T/N. Therefore, the number of samples allocated for cyclic prefix can be calculated as Ncp=Tcp*N/T, where N is the FFT/IFFT length, T is the IFFT/FFT period and Tcp is the duration of cyclic prefix.
+The key ideas behind adding cyclic prefix :
+
+1) Convert linear convolution in to circular convolution which eases the process of detecting the received signal by using a simple single tap equalizer
+If you wish to know how the addition of cyclic prefix converts linear convolution to circular convolution, visit this link
+2) Help combat ISI and ICC.
+
+When a cyclic prefix of length Ncp is added to the OFDM symbol, the output of the channel (r) is given by circular convolution of channel impulse response (h) and the OFDM symbols with cyclic prefix (x).
+
+$r=h \circledast x$
+
+As we know, for the discrete signals, circular convolution in the time domain translates to multiplication in the frequency domain.Thus, in frequency domain, the above equation translates to
+
+$R=HX$
+
+At the receiver, R is the received signal (in Frequency domain) and our goal is to estimate the transmitted signal (X) from the received signal R. From the above equation, the problem of detecting the transmitted signal at the receiver side translate to a simple equalization equation as follows
+
+$\hat{X}= \frac{R}{H}$
+
+After the FFT performed at the receiver side (i.e. after the FFT block in the receiver side), a single tap equalizer (which essentially implements the above equation) is used to estimate the transmitted OFDM symbol. It also corrects the phase and equalizes the amplitude.
+
+A basic OFDM architecture with Cyclic Prefix is given below. (In the following diagram, symbols represented by small case letters are assumed to be in time domain, whereas the symbols represented by uppercase letters are assumedto be in frequency domain)
+An OFDM communication Architecture with Cyclic Prefix (click picture to enlarge)
+
+An OFDM communication Architecture with Cyclic Prefix
+[[../../images/Cyclic_prefix_OFDM_architecture-300x210.jpg]]
+The IEEE specs specify the length of the Cyclic prefix in terms of its duration.
+Lets see how to convert the specified duration (Tcp) in to actual number of samples assigned for cyclic prefix (Ncp).
+
+Lets see an example of deriving Ncp from IEEE 802.11 spec
+Given parameters in the spec: N=64; %FFT size or total number of subcarriers (used + unused) 64 Nsd = 48; %Number of data subcarriers 48 Nsp = 4 ; %Number of pilot subcarriers 4 ofdmBW = 20 * 10^6 ; % OFDM bandwidth Derived Parameters: deltaF = ofdmBW/N; % Bandwidth for each subcarrier - include all used and unused subcarries Tfft = 1/deltaF; % IFFT or FFT period = 3.2us Tgi = Tfft/4; % Guard interval duration - duration of cyclic prefix - 1/4th portion of OFDM symbols Tsignal = Tgi+Tfft; % Total duration of BPSK-OFDM symbol = Guard time + FFT period Ncp = N*Tgi/Tfft; %Number of symbols allocated to cyclic prefix Nst = Nsd + Nsp; % Number of total used subcarriers nBitsPerSym=Nst; %For BPSK the number of Bits per Symbol is same as number of subcarriers
+#+BEGIN_SRC
+Given parameters in the spec:
+N=64;                           %FFT size or total number of subcarriers (used + unused) 64
+Nsd = 48;                      %Number of data subcarriers 48
+Nsp = 4 ;                        %Number of pilot subcarriers 4
+ofdmBW = 20 * 10^6 ;  % OFDM bandwidth
+
+Derived Parameters:
+deltaF = ofdmBW/N;      % Bandwidth for each subcarrier - include all used and unused subcarries
+Tfft = 1/deltaF;               % IFFT or FFT period = 3.2us
+Tgi = Tfft/4;                    % Guard interval duration - duration of cyclic prefix - 1/4th portion of OFDM symbols
+Tsignal = Tgi+Tfft;          % Total duration of BPSK-OFDM symbol = Guard time + FFT period
+Ncp = N*Tgi/Tfft;           %Number of symbols allocated to cyclic prefix
+Nst = Nsd + Nsp;           % Number of total used subcarriers
+nBitsPerSym=Nst;           %For BPSK the number of Bits per Symbol is same as number of subcarriers
+#+END_SRC

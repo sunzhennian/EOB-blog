@@ -1,0 +1,72 @@
+#+Title: Power and Energy of a signal
+#+DATE: 2014-02-17-02
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS:
+
+* Energy of a signal
+** Defining the term “size”
+
+   In signal processing, a signal is viewed as a function of time. The term “size of a signal” is used to represent “strength of the signal”. It is crucial to know the “size” of a signal used in a certain application. For example, we may be interested to know the amount of electricity needed to power a LCD monitor as opposed to a CRT monitor. Both of these applications are different and have different tolerances. Thus the amount of electricity driving these devices will also be different.
+
+A given signal’s size can be measured in many ways.Given a mathematical function (or a signal equivalently), it seems that the area under the curve, described by the mathematical function, is a good measure of describing the size of a signal. A signal can have both positive and negative values. This may render areas that are negative. Due to this effect, it is possible that the computed values cancel each other totally or partially, rendering incorrect result. Thus the metric function of “area under the curve” is not suitable for defining the “size” of a signal. Now, we are left with two options : either 1) computation of the area under the absolute value of the function or 2) computation of the area under the square of the function. The second choice is favored due to its mathematical tractability and its similarity to Euclidean Norm which is used in signal detection techniques (Note: Euclidean norm – otherwise called L2 norm or 2-norm – is often considered in signal detection techniques – on the assumption that it provides a reasonable measure of distance between two points on signal space. It is computed as Euclidean distance in detection theory).
+
+Going by the second choice of viewing the “size” as the computation of the area under the square of the function, the energy of a continuous-time complex signal \(x(t)\) is defined as
+$$ E_x=\int_{-\infty }^{\infty }\left | x(t) \right |^{2} dt $$
+
+If the signal x(t) is real, the modulus operator in the above equation does not matter.
+
+This is called “Energy” in signal processing terms. This is also a measure of signal strength. This definition can be applied to any signal (or a vector) irrespective of whether it possesses actual energy (a basic quantitative property as described by physics) or not. If the signal is associated with some physical energy, then the above definition gives the energy content in the signal. If the signal is an electrical signal, then the above definition gives the total energy of the signal (in Joules) dissipated over a 1 Ohm resistor.
+** Actual Energy – physical quantity
+
+To know the actual energy of the signal \(E\), one has to know the value of load \(Z\) the signal is driving and also the nature the electrical signal (voltage or current). For a voltage signal, the above equation has to be scaled by a factor of \(1/Z\).
+
+$$ E=\frac{E_x}{Z}=\frac{1}{Z}\int_{-\infty }^{\infty }\left | x(t) \right |^{2} dt $$
+
+For current signal, it has to be scaled by \(Z\).
+$$ E=Z E_x=Z\int_{-\infty }^{\infty }\left | x(t) \right |^{2} dt $$
+
+Here, \(Z\) is the impedance driven by the signal \(x(t)\) , \(E_x\) is the signal energy (signal processing term) and \(E\) is the Energy of the signal (physical quantity) driving the load \(Z\)
+** Energy in discrete domain
+
+In the discrete domain, the energy of the signal is given by
+$$ E_x=\sum_{n=-\infty }^{\infty }\left | x(n) \right |^2 $$
+
+The energy is finite only if the above sum converges to a finite value. This implies that the signal is “squarely-summable”. Such a signal is called finite energy signal.
+
+What if the given signal does not decay with respect to time (as in a continuous sine wave repeating its cycle infinitely) ? The energy will be infinite  and such a signal is “not squarely-summable” in other words. We need another measurable quantity to circumvent this problem.This leads us to the notion of “Power”
+* Power
+
+Power is defined as the amount of energy consumed per unit time. This quantity is useful if the energy of the signal goes to infinity or the signal is “not-squarely-summable”. For “non-squarely-summable” signals, the power calculated by taking the snapshot of the signal over a specific interval of time as follows
+
+1) Take a snapshot of the signal over some finite time duration
+2) Compute the energy of the signal \(E_x\)
+3) Divide the energy by number of samples taken for computation \(N\)
+4) Extend the limit of number of samples to infinity \(N\rightarrow \infty \). This gives the total power of the signal.
+
+In discrete domain, the total power of the signal is given by
+$$ P_x=\lim_{N\rightarrow \infty }\frac{1}{2N+1}\sum_{n=-N}^{n=+N}\left | x(n) \right |^2 $$
+
+Following equations are different forms of the same computation found in many text books. The only difference is the number of samples taken for computation. The denominator changes according to the number of samples taken for computation.
+$$ \begin{array}{ccc}
+P_x=\lim_{N\rightarrow \infty }\frac{1}{2N}\sum_{n=-N}^{n=N-1}\left | x(n) \right |^2 \\
+P_x=\lim_{N\rightarrow \infty }\frac{1}{N}\sum_{n=0}^{n=N-1}\left | x(n) \right |^2 \\
+P_x=\lim_{N\rightarrow \infty }\frac{1}{N_1-N_0+1}\sum_{n=N_0}^{n=N_1}\left | x(n) \right |^2
+\end{array} $$
+* Classification of Signals
+
+A signal can be classified based on its power or energy content. Signals having finite energy are energy signals. Power signals have finite and non-zero power.
+** Energy Signal
+
+A finite energy signal will have zero TOTAL power. Let’s investigate this statement in detail. When the energy is finite, the total power will be zero. Check out the denominator in the equation for calculating the total power. When the limit \(N\rightarrow \infty\), the energy dilutes to zero over the infinite duration and hence the total power becomes zero.
+** Power Signal
+
+Signals whose total power is finite and non-zero. The energy of the power signal will be infinite. Example: Periodic sequences like sinusoid. A sinusoidal signal has finite, non-zero power but infinite energy.
+
+A signal cannot be both an energy signal and a power signal.
+** Neither an Energy signal nor a Power signal
+
+Signals can also be a cat on the wall – neither an energy signal nor a power signal. Consider a signal of increasing amplitude defined by
+$$ x(n) = n $$
+
+For such a signal, both the energy and power will be infinite. Thus, it cannot be classified either as an energy signal or as a power signal

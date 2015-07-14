@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html>
+    {{&head}}    
+    <body>
+        {{&navigation}}
+        <div class="clearfix">
+        </div>
+        <div class="container">
+            <div class="content">
+                <div class="page-header">
+                    <h1>
+                        {{&Title}}
+                    </h1>
+                    <div class="meta-widget">
+								<i class="fa fa-clock-o"></i>
+								{{&DATE}}
+							</div>
+                </div>
+                <div class="row post">
+                    <!-- cols -->
+                    <div class="col-md-12">
+                        <div class="mypage">
+                            {{&context}}
+                        </div>
+                        <center>
+                            <div class="pagination">
+                                <ul class="pagination">
+                                   {{#post-pre}}
+                                    <li class="prev">
+                                        <a href="{{&post-url}}" class="alignleft prev">
+                                            <i class="fa fa-arrow-circle-o-left">
+                                            </i>
+                                            Prev
+                                        </a>
+                                    </li>
+                                    {{/post-pre}}
+                                    <li>
+                                        <a href="/archive">
+                                            <i class="fa fa-archive">
+                                            </i>
+                                            Archive
+                                        </a>
+                                    </li>
+                                    {{#post-next}}
+                                    <li class="next {{&next-disable}}">
+                                        <a href="{{&post-url}}" class="alignright next">
+                                            Next
+                                            <i class="fa fa-arrow-circle-o-right">
+                                            </i>
+                                        </a>
+                                    </li>
+                                    {{/post-next}}
+                                </ul>
+                            </div>
+                        </center>
+                        <!-- comment -->
+                        <section id="comment">
+                            <h2 class="title">
+                                Comments
+                            </h2>
+                            <!-- 多说评论框 start -->
+                            <div class="ds-thread" data-thread-key="{{&post-url}}" data-title="{{&post-title}}"
+                            data-url="{{&post-url}}">
+                            </div>
+                        </section>
+                    </div>
+                    <!-- col-md-9/col-md-12 -->
+                </div>
+                <!-- row -->
+            </div>
+        </div>
+        <div class="container-narrow">
+            <footer>
+                <p>
+                    &copy; {{&site-author}}
+                </p>
+            </footer>
+        </div>
+        <!-- container-narrow -->
+        <a id="gotop" href="#">
+            <span>
+                ▲
+            </span>
+        </a>
+        <script src="/static/js/jquery.imagesloaded.min.js">
+        </script>
+        <script src="/static/js/gallery.js">
+        </script>
+        <script src="/static/js/bootstrap.min.js">
+        </script>
+        <script src="/static/js/main.js">
+        </script>
+        <link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" media="screen"
+        type="text/css">
+        <script src="/static/fancybox/jquery.fancybox.pack.js">
+        </script>
+        <script type="text/javascript">
+            (function($) {
+                $('.fancybox').fancybox();
+            })(jQuery);
+        </script>
+        <!-- 多说评论框 end -->
+        <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+        <script type="text/javascript">
+            var duoshuoQuery = {
+                short_name: "{{&duoshuo-shortname}}"
+            }; (function() {
+                var ds = document.createElement('script');
+                ds.type = 'text/javascript';
+                ds.async = true;
+                ds.src = (document.location.protocol == 'https:' ? 'https:': 'http:') + '//static.duoshuo.com/embed.js';
+                ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+            })();
+        </script>
+        <!-- 多说公共JS代码 end -->
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var ai = $('.article-content>iframe'),
+                ae = $('.article-content>embed'),
+                t = $('#toc'),
+                ta = $('#toc.toc-aside'),
+                o = $('.openaside'),
+                c = $('.closeaside');
+                if (ai.length > 0) {
+                    ai.wrap('<div class="video-container" />');
+                };
+                if (ae.length > 0) {
+                    ae.wrap('<div class="video-container" />');
+                };
+                c.click(function() {
+                    ta.css('display', 'block').addClass('fadeIn');
+                });
+                o.click(function() {
+                    ta.css('display', 'none');
+                });
+                $(window).scroll(function() {
+                    ta.css("top", Math.max(140, 320 - $(this).scrollTop()));
+                });
+            });
+        </script>
+        <!-- MathJax Begin -->
+        <!-- mathjax config similar to math.stackexchange -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                    inlineMath: [['$', '$'], ["\\(", "\\)"]],
+                    processEscapes: true
+                }
+            });
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                }
+            });
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Queue(function() {
+                var all = MathJax.Hub.getAllJax(),
+                i;
+                for (i = 0; i < all.length; i += 1) {
+                    all[i].SourceElement().parentNode.className += ' has-jax';
+                }
+            });
+        </script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        </script>
+        <!-- MathJax End -->
+    </body>
+
+</html>

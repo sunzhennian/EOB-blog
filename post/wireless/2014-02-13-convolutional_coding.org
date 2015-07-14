@@ -1,0 +1,71 @@
+#+Title: Convolutional Coding
+#+DATE: 2014-02-13
+#+OPTIONS: toc:nil section-numbers:nil
+#+CATEGORY: wireless
+#+TAGS: convolutional coding ; channel coding
+
+Convolutional codes differ from block codes by means of method of operation. A convolutional encoder operates over serial data, whereas block codes operates over a block of input data. Also different is the utilization of memory elements in the convolutional encoders. In the case of block codes, there is no memory element involved in the generation of encoded data.
+
+Convolutional codes are specified as (n,k,L) , where n is the number of output bits from the encoder, k is the number of input bits to the encoder and L is the constraint length of the encoder. Disparate expressions for constraint length are often found in different text books but the fundamental idea is same The constraint length is used to calculate the number of memory stages or flipflops used in the encoder. As long as we know L and the underlying formula we can calculate the number of memory stages (m). So it does not really matter which expression for L is used. The constraint length is expressed as
+
+$L = k(m+1)$
+
+In some text books it is expressed as L=k x (m) and in some other books it is even expressed as L=m+1.We will use the first expression throughout our discussion.
+
+We will take up a simple convolutional code (2,1,3) where n=2, k=1 and L=3 ( the expression L=k(m+1) is used).Lets construct the encoder from the above information. The encoder is constructed with 1 input bit, 2 output bits and 2 memory elements. Note that the L=k(m+1) expression leads to 2 memory elements. Here these two memory elements are used to store the past 2 input bits. If the expression L=k*m is used and for a (2,1,3) encoder (L=3), the number of memory elements will be 3, where these 3 memory elements are used to store past 3 input bits . So the expression for constraint length has to be carefully interpreted, otherwise any misinterpretation will lead to a different encoder structure altogether.
+
+Now we know the number of bits going into the encoder , number of bits coming out from it and the number of memory elements. Till now the encoder is like a black box to us in the sense that we don’t know how the memory elements are utilized to generate the output bits from the input. To fully understand the encoder structure we need something called “generator polynomials” that tell us how the memory elements are linked to achieve encoding. The generator polynomials for a specific convolutional encoder set (n,k,L) are usually found through simulation. The set (n,k,L) along with n generator polynomials completely describes a convolutional encoder.
+
+For our (2,1,3) encoder , we use two generator polynomials, one for each output.
+
+$g_0=\left [1 0 1 \right ]$
+
+$g_1=\left [1 1 1\right ]$
+
+Lets put everything to make the encoder structure.
+
+[[../../images/convolutionalencoder_2_4_1.jpg]]
+* Encoder structure,State Diagram and Trellis 
+
+The convolutional encoder can also be represented using a finite state machine. The entire behavior of a convolutional encoder is depicted by a state diagram. 
+The number of states in a state diagram depends on the number of memory elements in the encoder. If number of memory elements is m then the number of states in 
+the state diagram will be 2m.For the (2,1,3) convolutional encoder the number of states will be 4 , i.e., the last two memory elements are used to store the past 
+inputs I -1 and I -2. Transition between the states depends on the present input I 0.The solid line in the state diagram indicates the transitions due to the input 
+I0=0 and dotted lines are used to represent the transitions due to the input I0= 1. The output bits generated during each state transition is written in dark
+ red color (along the transistion lines).
+
+State diagrams can be easily constructed with the help of a state table as shown below.
+
+#+STARTUP: align
+|-------+---------------+------------+--------|
+| Input | Current state | Next state | Output |
+|-------+---------------+------------+--------|
+|     / |            <> |         <> |     <> |
+|-------+---------------+------------+--------|
+|     0 |            00 |         00 |     00 |
+|-------+---------------+------------+--------|
+|     0 |            01 |         00 |     11 |
+|-------+---------------+------------+--------|
+|     0 |            10 |         01 |     01 |
+|-------+---------------+------------+--------|
+|     0 |            11 |         01 |     10 |
+|-------+---------------+------------+--------|
+|     1 |            00 |         10 |     11 |
+|-------+---------------+------------+--------|
+|     1 |            01 |         10 |     00 |
+|-------+---------------+------------+--------|
+|     1 |            10 |         11 |     10 |
+|-------+---------------+------------+--------|
+|     1 |            11 |         11 |     01 |
+|-------+---------------+------------+--------|
+[[
+../../images/convolutional_state_diag.jpg]]
+
+A trellis diagram is constructed from the given state diagram. Trellis diagram helps us to understand the concept of 
+Viterbi Decoding algorithm that is used to decode the convolutional encoded data.
+
+[[../../images/trellis_1.jpg]]
+[[../../images/trellis_2.jpg]]
+
+A single stage Trellis is illustrated for understanding. The four possible states of the encoder are depicted as four horizontal rows. Present states are considered to be on the left side and the possible next states on the right side of the trellis. The connections between the present states and the next states exactly follow the state diagram representation. Again, the output bits generated during each state transition are indicated in dark red color. 
+A multiple stage Trellis is constructed by replicating the single stage and juxtaposing each of the single stage side by side as shown in the figure.

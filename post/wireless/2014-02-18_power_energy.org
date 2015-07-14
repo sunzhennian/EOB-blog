@@ -1,0 +1,44 @@
+#+Title: Matlab中计算信号的能量和功率
+#+DATE: 2014-02-18-02
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS:
+
+在通信系统的信号处理中经常需要计算信号的能量和功率，对于离散信号，能量和信号如下计算：
+
+$$E=T\sum_{n=0 }^{N-1 }\left | x[n] \right |^2$$
+
+$$P=\frac{1}{N}\sum_{n=0}^{N-1} \left | x[n] \right |^2$$
+
+Here T=duration of the signal , and x[n] denotes discrete samples of the signal at regular intervals (The sampled signal contains N points stretching from 0 to N-1).
+
+* Matlab code
+#+BEGIN_SRC matlab
+T=10;       %Total evaluation time
+Ts=0.001;   %Sampling time =&gt; 1000 samples per second
+Fs=1/Ts;    % Sampling period
+t=[0:Ts:T]; %define simulation time
+
+%sample function to calculate power
+
+x=cos(2*pi*100*t)+cos(2*pi*200*t)+sin(2*pi*300*t);
+power = (norm(x)^2)/length(x);
+
+%Plot Power Spectral Density - For older Matlab Versions
+
+psd1=spectrum(x,1024);
+specplot(psd1,Fs);
+
+%For Latest Matlab Versions use psd function instead of specplot
+
+psd1=spectrum(x,1024);
+hpsd = dspdata.psd(psd1,'Fs',Fs); % Create a PSD data object.
+plot(hpsd); % Plot the PSD
+#+END_SRC
+
+* Output
+power = 1.5002 (W)
+
+[[../../images/Power_spectrum.jpg]]
+
+It can be inferred from the above chart that the signal contains three peak power components at 100Hz, 200 Hz and 300 Hz .

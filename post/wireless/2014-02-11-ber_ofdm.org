@@ -1,0 +1,58 @@
+#+Title: Simulation of OFDM system in Matlab – BER Vs Eb/N0 for OFDM in AWGN channel
+#+DATE: 2014-02-11
+#+CATEGORY: wireless
+#+TAGS: ofdm; ber
+#+OPTIONS: toc:t
+
+* Calculating Es/N0 or Eb/N0 for OFDM system
+In order to do a Monte Carlo simulation of an OFDM system, required amount of channel noise has to be generated that is representative of required Eb/N0. In Matlab it is easier to generate a Gaussian noise with zero mean and unit variance. The generated zero-mean-unit-variance noise has to be scaled accordingly to represent the required Eb/N0 or Es/N0. If we have Es/N0, the required noise can be generated from zero-mean-unit-variance-noise by,
+
+$required noise = 10^{-\frac{E_s}{N_0} \frac{1}{20}} \times noise$
+
+Since the OFDM system transmits and received the data in symbols, it is appropriate/easier to generate required noise based on Es/N0 instead of Eb/N0 (as given above). But we are interested in plotting BER against Eb/N0. Ok!!! Then… how do we convert given Eb/N0 to Es/N0 for an OFDM system ?
+
+Normally for a simple BPSK system, bit energy and symbol energy are same. So Eb/N0 and Es/N0 are same for a BPSK system. But for a OFDM BPSK system, they are not the same. This is because, each OFDM symbol contains additional overhead in both time domain and frequency domain. In the time domain, the cyclic prefix is an additional overhead added to each OFDM symbol that is being transmitted. In the frequency domain, not all the subcarriers are utilized for transmitted the actual data bits, rather a few subcarriers are unused and are reserved as guard bands.
+* Effect of Cyclic Prefix on Es/N0
+The following diagram illustrates the concept of cyclic prefix. Each OFDM symbol contains both useful data and overhead (in the form of cyclic prefix). The bit energy represents the energy contained in the useful bits. In this case, the bit energy is spread over N bits (where N is the FFT size). On top of the useful data, additional Ncp bits are added as cyclic prefix, which forms the overhead. So if the entire OFDM symbol is considered, the symbol energy is spread across N+Ncp bits.
+
+This relationship is given as
+
+$Es(N+N_{cp})=NE_{b}$
+
+which translates to,
+
+$E_{s}=\frac{N}{N+N_{cp}}E_{b}$
+* Effect of unused subcarriers on Es/N0
+As mentioned earlier, not all the subcarriers are used for transmission. Out of the total N subcarriers, only Nst carriers are used for OFDM symbols transmission (this includes both data and pilot subcarriers). Again, in the frequency domain, the useful bit energy is spread across Nst subcarriers, whereas the symbol energy is spread across N subcarriers. This gives us another relationship between Es and Eb as given below
+
+$E_{s}\times {N}=N_{st}\times E_{b}$
+
+which translates to,
+
+$E_{s}=\frac{N_{st}}{N}\times E_{b}$
+
+From (1) and (2), the overall effect of both cyclic prefix and unused subcarriers on Es/N0 is given by
+
+$\frac{E_{s}}{N_{0}}=\left ( \frac{N}{N_{cp}+N} \right )\left ( \frac{N_{st}}{N} \right )\frac{E_{b}}{N_{0}}$
+
+which, when converted to dB yields the following relationship.
+
+$\left (\frac{E_{s}}{N_{0}}\right )_{dB}=\left ( \frac{N}{N_{cp}+N} \right )_{dB}+\left ( \frac{N_{st}}{N} \right )_{dB}+\left( \frac{E_{b}}{N_{0}}\right)_{dB}$
+
+Since Ncp cylic prefix are added to the OFDM symbol, the output signal from the parallel to serial converter has to be boosted to compensate for the wastage of energy associated with the addition of cyclic prefix. To properly generate the required SNR in Matlab, the signal term at the output of the parallel to serial converter has to be scaled as follows
+
+$Boosted\;OFDM\;signal = \sqrt{\frac{N_{cp}+N}{N}}\times OFDM\;signal$
+
+The received signal is represented as (for the given Eb/N0)
+
+$y = boosted \; OFDM \; signal + required \; noise$
+* Arrangement of subcarriers
+The IEEE 802.11 specification, specifies how to arrange the given subcarriers. The 52 used subcarriers (data + pilot) are assigned numbers from -26,-25,…-2,,-1 and 1,2,…,25,26. The following figure illustrates the scheme of assigning these subcarriers to the IFFT inputs.
+Assignment of OFDM Subcarriers
+* Simulation
+#+INCLUDE: "../../sourcecodes/ber_ofdm.m" src matlab
+
+* Simulation result
+#+CAPTION: The simulation result of BER Vs Eb/N0 for OFDM in AWGN channel
+#+NAME:   fig:SED-HR4049
+[[../../images/ber_ofdm.jpg]]

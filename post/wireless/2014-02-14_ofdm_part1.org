@@ -1,0 +1,54 @@
+#+Title:Introduction to OFDM – orthogonal Frequency division multiplexing
+#+DATE: 2014-02-14
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS: ofdm
+
+In modulations, information is mapped on to changes in frequency, phase or amplitude (or a combination of them) of a carrier signal. Multiplexing deals with
+allocation/accommodation of users in a given bandwidth (i.e. it deals with allocation of available resource).
+OFDM is a combination of modulation and multiplexing. In this technique, the given resource (bandwidth) is shared among individual modulated data sources.
+Normal modulation techniques (like AM, PM, FM, BPSK, QPSK, etc.., ) are single carrier modulation techniques, in which the incoming information is modulated over a
+single carrier. OFDM is a multicarrier modulation technique, which employs several carriers, within the allocated bandwidth, to convey the information from source
+ to destination. Each carrier may employ one of the several available digital modulation techniques (BPSK, QPSK, QAM etc..,).
+* Why OFDM
+
+OFDM is very effective for communication over channels with frequency selective fading ( different frequency components of the signal experience different fading).
+ It is very difficult to handle frequency selective fading in the receiver , in which case, the design of the receiver is hugely complex. Instead of trying to mitigate
+frequency selective fading as a whole (which occurs when a huge bandwidth is allocated for the data transmission over a frequency selective fading channel), OFDM mitigates
+the problem by converting the entire frequency selective fading channel into small flat fading channels (as seen by the individual subcarriers). Flat fading is easier to
+ combat (compared to frequency selective fading) by employing simple error correction and equalization schemes.
+* Difference between FDM and OFDM
+
+OFDM is a special case of FDM ( Frequency Division Multiplexing). In FDM, the given bandwidth is subdivided among a set of carriers. There is no relationship between
+ the carrier frequencies in FDM. For example, consider that the given bandwidth has to be divided among 5 carriers (say a,b,c,d,e). There is no relationship between
+the subcarriers ; a,b,c,d and e can anything within the given bandwidth.
+
+If the carriers are harmonics, say (b=2a,c=3a,d=4a,d=5a , integral multiple of fundamental component a ) then they become orthogonal. This is a special case of FDM,
+which is called OFDM (as implied by the word – ‘orthogonal’ in OFDM)
+* Designing OFDM Transmitter
+
+Consider that we want to send the following data bits using OFDM : D = {d0,d1,d2,…). The first thing that should be considered in designing the OFDM transmitter is
+the number of subcarriers required to send the given data. As a generic case, lets assume that we have N subcarriers. Each subcarriers are centered at frequencies
+that are orthogonal to each other (usually multiples of frequencies).
+
+The second design parameter could be the modulation format that we wish to use. An OFDM signal can be constructed using anyone of the following digital modulation
+techniques namely BPSK, QPSK, QAM etc..,
+The data (D) has to be first converted from serial stream into parallel stream depending on the number of sub-carriers (N). Since we assumed that there are N subcarriers
+allowed for the OFDM transmission, we name the subcarriers from 0 to N-1. Now, the Serial to Parallel converter takes the serial stream of input bits and outputs N parallel
+ streams (indexed from 0 to N-1). These parallel streams are individually converted into the required digital modulation format (BPSK, QPSK, QAM etc..,). Lets call this
+output S0,S1,..SN. The conversion of parallel data (D) into the digitally modulated data (S) is usually achieved by a constellation mapper, which is essentially a look
+up table (LUT). Once the data bits are converted to required modulation format, they need to be superimposed on the required orthogonal subcarriers for transmission.
+This is achieved by a series of N parallel sinusoidal oscillators tuned to N orthogonal frequencies (f0,f1,…fN-1). Finally, the resultant output from the N parallel
+arms are summed up together to produce the OFDM signal.
+
+The following figure illustrates the basic concept of OFDM transmission (note: In order to give a simple explanation to illustrate the underlying concept,the usual
+IFFT/FFT blocks that are used in actual OFDM system, are not used in the block diagram) .
+[[../../images/OFDM_transmitter_simple.jpg]]
+
+* Example
+The first example illustrates the concept of OFDM transmission with BPSK modulation as its underlying modulation format. The second example illustrates the OFDM
+transmission with pi/4 shifted QPSK modulation. Here 5 orthogonal subcarriers are assumed for the OFDM transmission.
+
+[[../../images/BPSK_OFDM_Transmit.jpg]]
+
+[[../../images/QPSK_OFDM_Transmit.jpg]]

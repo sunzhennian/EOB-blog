@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+    {{&head}}    
+    <body>
+        {{&navigation}}
+        <div class="clearfix">
+        </div>
+        <div class="container">
+            <div class="content">
+                <div class="page-header">
+                    <h1>
+                        {{&post-title}}
+                    </h1>
+                </div>
+                <div class="row post">
+                    <!-- cols -->
+                    <div class="col-md-12">
+                        <div class="mypage">
+                            {{&context}}
+                        </div>
+                    </div>
+                    <!-- col-md-9/col-md-12 -->
+                </div>
+                <!-- row -->
+            </div>
+        </div>
+        <div class="container-narrow">
+            <footer>
+                <p>
+                    &copy; {{&site-author}}
+                </p>
+            </footer>
+        </div>
+        <!-- container-narrow -->
+        <a id="gotop" href="#">
+            <span>
+                ▲
+            </span>
+        </a>
+        <script src="/static/js/jquery.imagesloaded.min.js">
+        </script>
+        <script src="/static/js/gallery.js">
+        </script>
+        <script src="/static/js/bootstrap.min.js">
+        </script>
+        <script src="/static/js/main.js">
+        </script>
+        <link rel="stylesheet" href="/static/fancybox/jquery.fancybox.css" media="screen"
+        type="text/css">
+        <script src="/static/fancybox/jquery.fancybox.pack.js">
+        </script>
+        <script type="text/javascript">
+            (function($) {
+                $('.fancybox').fancybox();
+            })(jQuery);
+        </script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var ai = $('.article-content>iframe'),
+                ae = $('.article-content>embed'),
+                t = $('#toc'),
+                ta = $('#toc.toc-aside'),
+                o = $('.openaside'),
+                c = $('.closeaside');
+                if (ai.length > 0) {
+                    ai.wrap('<div class="video-container" />');
+                };
+                if (ae.length > 0) {
+                    ae.wrap('<div class="video-container" />');
+                };
+                c.click(function() {
+                    ta.css('display', 'block').addClass('fadeIn');
+                });
+                o.click(function() {
+                    ta.css('display', 'none');
+                });
+                $(window).scroll(function() {
+                    ta.css("top", Math.max(140, 320 - $(this).scrollTop()));
+                });
+            });
+        </script>
+        <!-- MathJax Begin -->
+        <!-- mathjax config similar to math.stackexchange -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                    inlineMath: [['$', '$'], ["\\(", "\\)"]],
+                    processEscapes: true
+                }
+            });
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                }
+            });
+        </script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Queue(function() {
+                var all = MathJax.Hub.getAllJax(),
+                i;
+                for (i = 0; i < all.length; i += 1) {
+                    all[i].SourceElement().parentNode.className += ' has-jax';
+                }
+            });
+        </script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        </script>
+        <!-- MathJax End -->
+    </body>
+
+</html>

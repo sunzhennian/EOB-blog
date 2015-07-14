@@ -1,0 +1,71 @@
+#+Title:Introduction to OFDM – orthogonal Frequency division multiplexing – part 3
+#+DATE: 2014-02-14-01
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS: ofdm
+In the previous article, the architecture of an OFDM transmitter was described using sinusoidal components. Generally, an OFDM signal can be represented as
+
+$OFDM\; signal = c(t)=\sum_{n=0}^{N-1}s_{n}(t)sin(2\pi f_{n}t )$
+
+s(t) = symbols mapped to chosen constellation (BPSK/QPSK/QAM etc..,)
+
+Fn = orthogonal frequency
+
+This equation can be thought of as an IFFT process ( Inverse Fast Fourier Transform). The Fourier transform breaks a signal into different frequency bins by multiplying
+the signal with a series of sinusoids. This essentially translates the signal from time domain to frequency domain. But, we always view IFFT as a conversion process
+from frequency domain to time domain.
+
+FFT is represented by
+
+$X(k)=\sum_{n=0}^{N-1}x(n)sin(\frac{2\pi kn}{N})+j\sum_{n=0}^{N-1}x(n)cos(\frac{2\pi kn}{N})$
+
+where as its dual , IFFT is given by
+
+$x(n)=\sum_{n=0}^{N-1}X(k)sin(\frac{2\pi kn}{N})-j\sum_{n=0}^{N-1}X(k)cos(\frac{2\pi kn}{N})$
+
+The equation for FFT and IFFT differ by the co-efficients they take and the minus sign. Both equation does the same thing. They multiply the incoming signal with a
+series of sinusoids and separates them into bins.In fact, FFT and IFFT are dual and behaves in a similar way.IFFT and FFT blocks are interchangeable.
+
+Since the OFDM signal ( c(t) in the equation above ) is in time domain, IFFT is the appropriate choice to use in the transmitter, which can be thought of as
+converting frequency domain samples to time domain samples. Well, you might ask : s(t) is not in frequency domain and they are already in time domain;
+so whats the need to convert it into time domain again ? The answer is IFFT/FFT equation comes handy in implementing the conversion process and we can
+eliminate the individual sinusoidal multipliers required in the transmitter/receiver side. The following figure illustrates, how the use of IFFT in the
+transmitter eliminates the need for separate sinusoidal converters. Always remember that IFFT and FFT blocks in the transmitter are interchangeable as
+long as their duals are used in receiver.
+
+[[../../images/IFFT_OFDM_implementation.jpg]]
+
+OFDM implementation using FFT and IFFT
+    OFDM implementation using FFT and IFFT
+
+The entire architecture of a basic OFDM system with both transmitter and receiver will look like this
+[[../../images/OFDM_Transmitter_Receiver.jpg]]
+A Complete OFDM communication system
+
+A Complete OFDM communication system
+
+An OFDM system is defined by IFFT/FFT length – N ,the underlying modulation technique ( BPSK/QPSK/QAM), supported data rate, etc..,. The FFT/IFFT length N
+defines the number of total subcarriers present in the OFDM system. For example, an OFDM system with N=64 provides 64 subcarriers. In reality, not all the
+subcarriers are utilized for data transmission. Some subcarriers are reserved for pilot carriers (used for channel estimation/equalization and to combat
+magnitude and phase errors in the receiver) and some are left unused to act as guard band. OFDM system do not transmitany data on the subcarriers that
+are near the two ends of the transmission band ( Not necessarily at the ends of the bands, implementation may differ). These subcarriers are collectively
+called guard band. The reservation of subcarriers to guard bands helps to reduce the out of band radiation and thus eases the requirements on transmitter
+ front-end filters.The subcarriers in the guard band are also called Null subcarriers or virtual subcarriers.
+
+For example IEEE 802.11 standard specifies the following parameters for its OFDM physical layer.
+
+FFT/IFFT size = 64 ( implies 64 subcarriers in total = used + unused = Nfft)
+
+Number of data subcarriers = 48 ( Nd)
+
+Number of pilot subcarriers = 4 (Np)
+
+Derived parameters from the above specification.
+
+Number of total USED subcarriers = 52 ( Nu = Nd+ Np )
+
+Number of total UNUSED subcarriers = 12 ( Nun = Nfft – Nu ).
+
+According to the spec, these 52 used subcarriers are distributed in the following way. The 52 used subcarriers are named as 1,2,3,…,26 and -1,-2,-3,…,-26.
+The used subcarriers 1 to 26 are mapped to 1 to 26 of IFFT inputs and the subcarriers -1,-2,..,-26 are mapped to the IFFT inputs 38 to 63. The remaining
+IFFT inputs 27 to 37 and the input 0 (dc input) are set to 0 .In this manner the 12 null subcarriers are mapped to IFFT inputs.

@@ -1,0 +1,98 @@
+#+Title: 随机变量，CDF and PDF
+#+DATE: 2014-02-18-02
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: math
+#+TAGS:
+
+* Random Variable
+A random variable is a mapping from sample space \Omega to a set of real numbers. What does this mean ? Lets take the usual evergreen example of “flipping a coin”.
+
+In a “coin-flipping” experiment, the outcome is not known prior to the experiment, that is we cannot predict it with certainty (undeterministic/stochastic). But we know the all possible outcomes – Head or Tail. Assign real numbers to the all possible events (this is called “sample space”), say “0″ to “Head” and “1″ to “Tail”, and associate a variable “X” that could take these two values. This variable “X” is called a random variable, since it can randomly take any value ’0′ or ’1′ before performing the actual experiment.
+
+Obviously, we do not want to wait till the coin-flipping experiment is done. Because the outcome will lose its significance, we want to associate some probability to each of the possible event. In the coin-flipping experiment, all outcomes are equally probable (given that the coin is fair and unbiased). This means that we can say that the probability of getting Head ( our random variable X = 0 ) as well that of getting Tail ( X =1 ) is 0.5 (i.e. 50-50 change for getting Head/Tail).
+
+This can be written as,
+
+$P(X=0)=0.5 and P(X=1)=0.5$
+
+* Cumulative Distribution Function(CDF)
+Mathematically, a complete description of a random variable is given be “Cumulative Distribution Function“- FX(x). Here the bold faced “X” is a random variable and “x” is a dummy variable which is a place holder for all possible outcomes ( “0″ and “1″ in the above mentioned coin flipping experiment). The Cumulative Distribution Function is defined as,
+
+$F_X(x)=P(X \le x)$
+
+If we plot the CDF for our coin-flipping experiment, it would look like the one shown in Figure 1.
+
+The example provided above is of discrete nature, as the values taken by the random variable are discrete (either “0″ or “1″) and therefore the random variable is called Discrete Random Variable.
+
+If the values taken by the random variables are of continuous nature (Example: Measurement of temperature), then the random variable is called Continuous Random Variable and the corresponding cumulative distribution function will be smoother without discontinuities.
+* Probability Distribution function(PDF)
+Consider an experiment in which the probability of events are as follows. The probabilities of getting the numbers 1,2,3,4 individually are 1/10,2/10,3/10,4/10 respectively. It will be more convenient for us if we have an equation for this experiment which will give these values based on the events. For example, the equation for this experiment can be given by f(x)=x/10 where x=1,2,3,4. This equation ( equivalently a function) is called probability distribution function.
+* Probability Density function (PDF) and Probability Mass Function(PMF)
+Its more common deal with Probability Density Function (PDF)/Probability Mass Function (PMF) than CDF.
+
+The PDF (defined for Continuous Random Variables) is given by taking the first derivate of CDF.
+
+$f_X(x)=\frac{dF_X(x)}{dx}$
+
+For discrete random variable that takes on discrete values, is it common to defined Probability Mass Function.
+
+$f_X(x)=P_X(X=x)$
+
+The previous example was simple. The problem becomes slightly complex if we are asked to find the probability of getting a value less than or equal to 3. Now the straight forward approach will be to add the probabilities of getting the values x=1,2,3 which comes out to be 1/10+2/10+3/10 =6/10. This can be easily modeled as a probability density function which will be the integral of probability distribution function with limits 1 to 3.
+
+Based on the probability density function or how the PDF graph looks, PDF fall into different categories like binomial distribution, Uniform distribution, Gaussian distribution, Chi-square distribution, Rayleigh distribution, Rician distribution etc. Out of these distributions, you will encounter Gaussian distribution or Gaussian Random variable in digital communication very often.
+* Mean
+The mean of a random variable is defined as the weighted average of all possible values the random variable can take. Probability of each outcome is used to weight each value when calculating the mean. Mean is also called expectation (E[X])
+
+For continuos random variable X and probability density function fX(x)
+
+$$E\left[X \right] = \int_{-\infty }^{\infty}xf_X(x)dx$$
+
+For discrete random variable X, the mean is calculated as weighted average of all possible values (xi) weighted with individual probability (pi)
+
+$$E\left[X \right] = \mu{_X} = \sum_{-\infty }^{\infty}x_{i}p_{i}$$
+
+* Variance
+Variance measures the spread of a distribution. For a continuous random variable X, the variance is defined as
+
+$$var \left[X\right] = \int_{-\infty }^{\infty} \left(x - E\left[X \right] \right)^2 f_X(x) dx$$
+
+For discrete case, the variance is defined as
+
+$$var \left[X\right] = {\sigma^2}_X = \sum_{-\infty }^{\infty} \left( x_i - \mu_X\right)^2 p_{i}$$
+
+Standard Deviation (\sigma ) is defined as the square root of variance {\sigma^2}_X
+* Properties of Mean and Variance
+For a constant – “c” following properties will hold true for mean
+
+$E\left[cX\right] = c E\left[X\right]$
+
+$E\left[X+c\right] = E\left[X\right]+c$
+
+$E\left[c\right] = c$
+
+
+For a constant – “c” following properties will hold true for variance
+
+$var\left[cX\right] = c^2 var\left[X\right]$
+
+$var\left[X+c\right] = var\left[X\right]$
+
+$var\left[c\right] = 0$
+
+PDF and CDF define a random variable completely. For example: If two random variables X and Y have the same PDF, then they will have the same CDF and therefore their mean and variance will be same.
+On the otherhand, mean and variance describes a random variable only partially. If two random variables X and Y have the same mean and variance, they may or may not have the same PDF or CDF.
+Gaussian Distribution :
+
+Gaussian PDF looks like a bell. It is used most widely in communication engineering. For example , all channels are assumed to be Additive White Gaussian Noise channel. What is the reason behind it ? Gaussian noise gives the smallest channel capacity with fixed noise power. This means that it results in the worst channel impairment. So the coding designs done under this most adverse environment will give superior and satisfactory performance in real environments. For more information on “Gaussianity” refer [fn:1]
+
+The PDF of the Gaussian Distribution (also called as Normal Distribution) is completely characterized by its mean (\mu) and variance(\sigma),
+
+$f(x)=\frac{1}{\sqrt{2\pi \sigma ^{2}}}e^{^{\frac{-(x-\mu )^{2}}{2\sigma ^{2}}}}$
+
+Since PDF is defined as the first derivative of CDF, a reverse engineering tell us that CDF can be obtained by taking an integral of PDF.
+Thus to get the CDF of the above given function,
+
+$F_{\textbf{X}}(x;\mu,\sigma^{2})=\frac{1}{\sqrt{2\pi}}\int_{-\infty }^{\frac{x-\mu}{\sigma}}e^{\frac{-t^{2}}{2}}dt$
+
+[fn:1] S.Pasupathy, “Glories of Gaussianity”, IEEE Communications magazine, Aug 1989 – 1, pp 38.

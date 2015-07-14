@@ -1,0 +1,91 @@
+#+Title: Fading channels – Rayleigh Fading
+#+DATE: 2014-02-14
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS: channel modeling
+
+In a wireless communication channel, the transmitted signal can travel from transmitter to receiver over multiple reflective paths. This gives rise to multipath fading which causes fluctuations in amplitude, phase and angle of arrival of the received signal. For example , the transmitted signal from the BTS (base transceiver station) may suffer multiple reflections from the buildings nearby, before reaching the mobile station.
+
+Such multipath fading channels are often classified into slow fadding/fast fadding and frequency-selective/flat fadding channels.
+Types of Fading models:
+
+A model is necessary to predict the effects of this fading accurately in order to mitigate it effects. Some of the models used to model multipath fading are
+- Rayleigh Fading model ( Clarke’s Model , Young’s model )
+- Rician Fading model
+- Nakagami Fading model
+- Weibull Fading model
+- Log-Normal Shadowing model
+
+Apart from multipath reflection there might also be dispersive time varying effects in the channel that is being modeled. One such effect is Doppler Shift that is caused when the receiver and/or transmitter is in motion with respect to each other. In such cases the dispersive effect is also modeled along with the chosen multipath model.
+
+Here the frequency-flat fading Rayleigh Fading model with Doppler shift is considered for our simulation .
+* Rayleigh Fading
+
+The delays associated with different signal paths in a multipath fading channel change in an unpredictable manner and can only be characterized statistically. When there are a large number of paths, the central limit theorem can be applied to model the time-variant impulse response of the channel as a complex-valued Gaussian random process. When the impulse response is modeled as a zeromean complex-valued Gaussian process, the channel is said to be a Rayleigh fading channel.
+
+The model behind Rician fading is similar to that for Rayleigh fading, except that in Rician fading a strong dominant component is present. This dominant component can for instance be the line-of-sight wave.
+
+In our case the Rayleigh Fading model is assumed to have only two multipath components X(t) and Y(t). Rayleigh Fading can be obtained from zero-mean complex Gaussian processes (X(t) and Y(t) ). Simply adding the two Gaussian Random variables and taking the square root (envelope) gives a Rayleigh distributed process .The phase follows uniform distribution.
+Matlab Code:
+#+BEGIN_SRC matlab
+%----Rayleigh_PDF-----------------------------------------
+%----------Input Section----------------
+
+N=1000000;  %Number of samples to generate
+variance = 0.2; % Variance of underlying Gaussian random variables
+%---------------------------------------
+
+
+%Independent Gaussian random variables with zero mean and unit variance
+
+x = randn(1, N);
+y = randn(1, N);
+
+%Rayleigh fading envelope with the desired variance
+
+r = sqrt(variance*(x.^2 + y.^2));
+
+%Define bin steps and range for histogram plotting
+
+step = 0.1; range = 0:step:3;
+
+%Get histogram values and approximate it to get the pdf curve
+
+h = hist(r, range);
+approxPDF = h/(step*sum(h)); %Simulated PDF from the x and y samples
+
+%Theoritical PDF from the Rayleigh Fading equation
+
+theoretical = (range/variance).*exp(-range.^2/(2*variance));
+plot(range, approxPDF,'b*', range, theoretical,'r');
+title('Simulated and Theoretical Rayleigh PDF for variance = 0.5')
+legend('Simulated PDF','Theoretical PDF')
+xlabel('r --->');
+ylabel('P(r)---> ');
+grid;
+
+%PDF of phase of the Rayleigh envelope
+
+theta = atan(y./x);
+figure(2)
+hist(theta); %Plot  histogram of the phase part
+%Approximate the histogram of the phase part to a nice PDF curve
+
+[counts,range] = hist(theta,100);
+step=range(2)-range(1);
+approxPDF = counts/(step*sum(counts)); %Simulated PDF from the x and y samples
+bar(range, approxPDF,'b');
+hold on
+plotHandle=plot(range, approxPDF,'r');
+set(plotHandle,'LineWidth',3.5);
+axis([-2 2 0 max(approxPDF)+0.2])
+hold off
+title('Simulated PDF of Phase of Rayleigh Distribution ');
+xlabel('\theta   --->');
+ylabel('P(\theta)  --->');
+grid;
+#+END_SRC
+Here two independent identically distributed Gaussian random arrays are generated using randn function in matlab and the envelope of their sum is computed to give Rayleigh Fading process. Histogram is used to plot the pdf of the generated process and its phase plot is also drawn.
+* Output
+
+[[../../images/Rayleigh_PDF_envelope-1024x781.jpg]]

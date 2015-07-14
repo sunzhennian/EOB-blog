@@ -1,0 +1,88 @@
+#+Title: Rayleigh Fading Simulation – Young’s model
+#+DATE: 2014-02-19-02
+#+OPTIONS: toc:nil num:nil
+#+CATEGORY: wireless
+#+TAGS:
+In the previous article, the characteristics and types of fading was discussed. Rayleigh Fading channel with Doppler shift is considered in this article.
+
+Consider a channel affected by both Rayleigh Fading phenomena and Doppler Shift. Rayleigh Fading is caused due to multipath reflections of the received signal before it reaches the receiver and the Doppler Shift is caused due to the difference in the relative velocity/motion between the transmitter and the receiver. This scenario is encountered in day to day mobile communications.
+
+A number of simulation algorithms are proposed for generation of correlated Rayleigh random variables. David J.Young and Norman C Beaulieu proposed a method in their paper titled “The Generation of Correlated Rayleigh Random Variates by Inverse Discrete Fourier Transform”[1] based on the inverse discrete Fourier transform (IDFT). It is a modification of the Smith’s algorithm which is normally used for Rayleigh fading simulation. This method requires exactly one-half the number of IDFT operations and roughly two-thirds the computer memory of the original method – as the authors of the paper claims.
+
+Rayleigh Fading can be simulated by adding two Gaussian Random variables as mentioned in my previous post. The effect of Doppler shift is incorporated by modeling the Doppler effect as a frequency domain filter.
+
+The model proposed by Young et.al is shown below.
+
+[[../../images/Youngs_model-1024x465.jpg]]
+
+The Fading effect + Doppler Shift is simulated by multiplying the Gaussian Random variables and the Doppler Shift’s Frequency domain representation. Then IDFT is performed to bring them into time domain representation. The Doppler Filter used to represent the Doppler Shift effect is derived in Young’s paper.
+
+The equation for the Doppler Filter is :
+$$F_M[k]=\left \{\begin{array}{rcl}
+0 & &{k=0} \\
+\sqrt{\frac {1}{2\sqrt{1-(\frac {k}{Nf_m})^2}}} & & {k=1,2,...,k_m-1}\\
+\sqrt{\frac{k_m}{2}[\frac{\pi}{2}-\arctan{(\frac{k_m-1}{\sqrt{2k_m-1}})}]} & & {k=k_m}\\
+0 & & {k=k_m+1,...,N-k_m-1} \\
+\sqrt{\frac{k_m}{2}[\frac{\pi}{2}-\arctan{(\frac{k_m-1}{\sqrt{2k_m-1}})}]} & & {k=N-k_m}\\
+\sqrt{\frac {1}{2\sqrt{1-(\frac {k}{Nf_m})^2}}} & & {k=N-k_m+1,...,N-2,N-1}\\
+\end{array}\right. $$
+
+* Matlab code
+#+BEGIN_SRC matlab
+%File_1: dopplerFilter.m
+function [freqResponse]=dopplerFilter(Fm,Fs,M)
+F = zeros(1,M);
+dopplerRatio = Fm/Fs;
+km=dopplerRatio*M;
+for i=1:M
+    if (i==1),
+        F(i)=0;
+    elseif (i>=2 && i<=km),
+        F(i)=sqrt(1/(2*sqrt(1-(i/(M*dopplerRatio)^2))));
+    elseif (i==km+1),
+        F(i)=sqrt(km/2*(pi/2-atan((km-1)/sqrt(2*km-1))));
+    elseif (i>=km+2 && i<=M-km+2),
+        F(i) = 0;
+    elseif (i==M*km),
+        F(i)=sqrt(km/2*(pi/2-atan((km-1)/sqrt(2*km-1))));
+    else
+        F(i)=sqrt(1/(2*sqrt(1-((M-i)/(M*dopplerRatio)^2))));
+    end
+end
+freqResponse = F;
+
+#+END_SRC
+#+BEGIN_SRC matlab
+%testYoungsModel.m
+%-------Input Section----------------------------------
+N=4096; %Number of sample points (N)
+%N is usually a power of 2
+Fm=50; %Maximum Doppler Frequency Shift
+Fs=1000; %Sampling Frequency
+%Baseband Gaussian Noise Generators
+mean = 0; %Mean of Gaussian random variables
+variance = 0.5; %Variance of Gaussian random variables
+%------------------------------------------------------
+sdev = sqrt(variance); %Standard Deviation of Gaussian RV
+%In-phase Noise components
+G1 = mean + sdev.*randn(1,N) ; %N i.i.d Gaussian random samples
+%Quadrature-phase Noise components
+G2 = mean + sdev.*randn(1,N) ; %N i.i.d Gaussian random samples
+C = G1-1i*G2;
+%Define Spectral characteristics of the Doppler effect in frequency domain Fk =Doppler Filter output
+Fk = dopplerFilter(Fm,Fs,N);
+%Multiply C by filter sequency Fk
+U = C.*Fk;
+NFFT = 2^nextpow2(length(U));
+u=abs(ifft(U,NFFT)); %Take IDFT
+normalizedFading = u/max(u); %Baseband Rayleigh envelope
+plot(10*log10(normalizedFading)) %plot command
+title(['Rayleigh Fading with doppler effect for Fm=',num2str(Fm),'Hz']);
+xlabel('Samples');
+ylabel('Rayleigh Fading envelope(dB)');
+axis([0 500 -20 2]); %showing only few samples for clarity
+#+END_SRC
+
+* Simulation results
+
+[[../../images/fading_channel_Young’s_model .jpg]]
